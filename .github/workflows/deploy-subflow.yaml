@@ -52,7 +52,7 @@ jobs:
         # and set it as an environment variable
         # Example: 3.10.4 -> 3.10
         run: |
-          echo "python-version=$(echo ${{steps.setup-python.outputs.python-version}} | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
+          echo "python-version=$(echo ${{steps.setup-python.outputs.python-version}} | sed 's/\.[^.]*$//')" >> "$GITHUB_OUTPUT"
 
       - name: Azure login
         uses: azure/login@v2
