@@ -5,6 +5,10 @@ param pythonVersion string
 @secure()
 param deployClientId string
 
+module logging 'logging.bicep' = {
+  name: 'logging'
+}
+
 module storage 'storage.bicep' = {
   name: 'storage'
   params: {
@@ -15,9 +19,10 @@ module storage 'storage.bicep' = {
 module functionapp 'function-app.bicep' = {
     name: 'functionapp'
     params: {
-        storageAccountName: storage.outputs.storageAccountName
+        aiConnectionString: logging.outputs.aiConnectionString
         deploymentBlobContainerName: storage.outputs.deploymentBlobContainerName
         pythonVersion: pythonVersion
+        storageAccountName: storage.outputs.storageAccountName
     }
 }
 

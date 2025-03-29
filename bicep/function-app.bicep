@@ -8,6 +8,11 @@ param deploymentBlobContainerName string
 @description('The version of Python to use for the function app.')
 param pythonVersion string
 
+@description('The connection string for Application Insights.')
+@secure()
+param aiConnectionString string
+
+
 // ------------------------------------------------
 // Storage Account
 resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' existing = {
@@ -70,6 +75,10 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         {
           name: 'AzureWebJobsStorage__accountName'
           value: storageAccount.name
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: aiConnectionString
         }
       ]
       minTlsVersion: '1.2'
