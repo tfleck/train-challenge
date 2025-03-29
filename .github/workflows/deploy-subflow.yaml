@@ -48,12 +48,11 @@ jobs:
 
       - name: Get Python Major/Minor Version
         id: get-python-version
+        # Extract the major and minor version from the full version string
+        # and set it as an environment variable
+        # Example: 3.10.4 -> 3.10
         run: |
-          # Extract the major and minor version from the full version string
-          # and set it as an environment variable
-          # Example: 3.10.4 -> 3.10
           echo "python-version=$(echo ${{steps.setup-python.outputs.python-version}} | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
-          
 
       - name: Azure login
         uses: azure/login@v2
