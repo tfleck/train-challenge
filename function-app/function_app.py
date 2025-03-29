@@ -1,13 +1,12 @@
-import json
 import logging
 
 from os import getenv
 
 import azure.functions as func
+import geojson
 
 from azure.functions import Context
 from azure.monitor.opentelemetry import configure_azure_monitor
-from geojson import Feature
 from opentelemetry import trace
 from opentelemetry.propagate import extract
 from shapely import Point
@@ -111,7 +110,7 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
 
         nearest_station = septa_gdf.loc[nearest_row_idx]
 
-        ret = Feature(
+        ret = geojson.Feature(
             geometry=nearest_station.geometry,
             properties={
                 "stop_id": nearest_station.stop_id,
@@ -120,7 +119,7 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
         )
 
         return func.HttpResponse(
-            json.dumps(ret),
+            geojson.dumps(ret),
             mimetype="application/json",
             status_code=200,
         )
