@@ -68,7 +68,7 @@ jobs:
           type: deploymentStack
           operation: create
           name: Development
-          location: eastus
+          location: centralus
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           scope: resourceGroup
           resource-group-name: ${{ secrets.RESOURCE_GROUP_NAME }}
