@@ -88,7 +88,7 @@ jobs:
           pushd '.'
           python -m pip install --upgrade pip
           poetry export --without-hashes --with api --format=requirements.txt > ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/requirements.txt
-          echo "../." > ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/requirements.txt
+          echo "../." >> ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/requirements.txt
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           pip install -r requirements.txt --target=".python_packages/lib/site-packages"
           popd
