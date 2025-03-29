@@ -98,5 +98,4 @@ jobs:
         with:
           app-name: ${{ steps.bicep-deploy.outputs.functionAppName }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          scm-do-build-during-deployment: true
-          enable-oryx-build: true
+          respect-funcignore: true
