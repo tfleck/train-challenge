@@ -3,15 +3,18 @@ import logging
 from os import getenv
 
 import azure.functions as func
-import geojson
 
+
+# import geojson
 from azure.functions import Context
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
 from opentelemetry.propagate import extract
-from shapely import Point
 
-import trainchallenge as tc
+
+# from shapely import Point
+
+# import trainchallenge as tc
 
 
 # Configure OpenTelemetry to use Azure Monitor with the
@@ -31,7 +34,7 @@ logger = logging.getLogger(
     "trainchallenge"
 )  # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
 
-septa_gdf = tc.septa.load_regional_rail_data()
+# septa_gdf = tc.septa.load_regional_rail_data()
 
 
 @app.route(route="http_trigger")
@@ -99,27 +102,28 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
             )
 
         # check that lat and long are not None
-        if lat_float is None or long_input is None:
+        if lat_float is None or long_float is None:
             return func.HttpResponse(
                 "Please pass latitude and longitude in the query string or in the request body",
                 status_code=400,
             )
 
-        p = Point(long_float, lat_float, 0)
-        nearest_row_idx = tc.common.get_nearest_point(p, septa_gdf["geometry"])  # type: ignore[reportArgumentType]
+        # p = Point(long_float, lat_float, 0)
+        # nearest_row_idx = tc.common.get_nearest_point(p, septa_gdf["geometry"])  # type: ignore[reportArgumentType]
 
-        nearest_station = septa_gdf.loc[nearest_row_idx]
+        # nearest_station = septa_gdf.loc[nearest_row_idx]
 
-        ret = geojson.Feature(
-            geometry=nearest_station.geometry,
-            properties={
-                "stop_id": nearest_station.stop_id,
-                "station_name": nearest_station.station_name,
-            },
-        )
+        # ret = geojson.Feature(
+        #     geometry=nearest_station.geometry,
+        #     properties={
+        #         "stop_id": nearest_station.stop_id,
+        #         "station_name": nearest_station.station_name,
+        #     },
+        # )
 
         return func.HttpResponse(
-            geojson.dumps(ret),
+            # geojson.dumps(ret),
+            '{"message": "Hello, World!"}',
             mimetype="application/json",
             status_code=200,
         )
