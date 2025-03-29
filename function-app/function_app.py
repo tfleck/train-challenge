@@ -7,10 +7,10 @@ import azure.functions as func
 
 from azure.functions import Context
 from azure.monitor.opentelemetry import configure_azure_monitor
+from geojson import Feature
 from opentelemetry import trace
 from opentelemetry.propagate import extract
 from shapely import Point
-from shapely import to_geojson
 
 import trainchallenge as tc
 
@@ -111,14 +111,13 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
 
         nearest_station = septa_gdf.loc[nearest_row_idx]
 
-        ret = {
-            "type": "Feature",
-            "geometry": json.loads(to_geojson(nearest_station.geometry)),
-            "properties": {
+        ret = Feature(
+            geometry=nearest_station.geometry,
+            properties={
                 "stop_id": nearest_station.stop_id,
                 "station_name": nearest_station.station_name,
             },
-        }
+        )
 
         return func.HttpResponse(
             json.dumps(ret),
