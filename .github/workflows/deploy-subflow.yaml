@@ -45,6 +45,16 @@ jobs:
           cache: 'poetry' # caching poetry dependencies
           cache-dependency-path: 'poetry.lock' # caching poetry dependencies
 
+
+      - name: Get Python Major/Minor Version
+        id: get-python-version
+        run: |
+          # Extract the major and minor version from the full version string
+          # and set it as an environment variable
+          # Example: 3.10.4 -> 3.10
+          echo "python-version=$(echo ${{steps.setup-python.outputs.python-version}} | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
+          
+
       - name: Azure login
         uses: azure/login@v2
         with:
@@ -66,7 +76,7 @@ jobs:
           template-file: ./bicep/main.bicep
           action-on-unmanage-resources: delete
           deny-settings-mode: none
-          parameters: '{"pythonVersion": "${{ steps.setup-python.outputs.python-version }}" }'
+          parameters: '{"pythonVersion": "${{ steps.get-python-version.outputs.python-version }}" }'
 
       - name: 'Resolve Project Dependencies Using Pip'
         shell: bash
