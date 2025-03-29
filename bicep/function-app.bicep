@@ -12,6 +12,14 @@ param pythonVersion string
 @secure()
 param aiConnectionString string
 
+@description('The client id of the github oauth integration.')
+@secure()
+param githubAuthClientId string
+
+@description('The client secret of the github oauth integration.')
+@secure()
+param githubAuthClientSecret string
+
 
 // ------------------------------------------------
 // Storage Account
@@ -80,8 +88,40 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: aiConnectionString
         }
+        {
+          name: 'GITHUB_PROVIDER_AUTHENTICATION_SECRET'
+          value: githubAuthClientSecret
+        }
       ]
       minTlsVersion: '1.2'
+    }
+  }
+}
+
+resource authsettings 'Microsoft.Web/sites/config@2022-03-01' = {
+  parent: functionApp
+  name: 'authsettingsV2'
+  properties: {
+    globalValidation: {
+      requireAuthentication:  true
+      unauthenticatedClientAction: 'Return401'
+    }
+    login: {
+      tokenStore: {
+        enabled: true
+      }
+    }
+    platform: {
+      enabled: true
+    }
+    identityProviders: {
+      gitHub: {
+        enabled: true
+        registration: {
+          clientId: githubAuthClientId
+          clientSecretSettingName: 'GITHUB_PROVIDER_AUTHENTICATION_SECRET'
+        }
+      }
     }
   }
 }
