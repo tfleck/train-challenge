@@ -33,10 +33,10 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2024-04-01' = {
   name: 'hp-trainchallenge'
   location: resourceGroup().location
   tags: resourceGroup().tags
-  kind: 'functionapp'
+  kind: 'functionapp,linux'
   sku: {
-    name: 'FC1'
-    tier: 'FlexConsumption'
+    name: 'Y1'
+    tier: 'Dynamic'
   }
   properties: {
     reserved: true
@@ -54,27 +54,6 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
   properties: {
     clientAffinityEnabled: false
     clientCertEnabled: false
-    functionAppConfig: {
-      deployment: {
-        storage: {
-          type: 'blobContainer'
-          value: '${storageAccount.properties.primaryEndpoints.blob}${deploymentBlobContainerName}'
-          authentication: {
-            type: 'SystemAssignedIdentity'
-          }
-        }
-      }
-      scaleAndConcurrency: {
-        // valid values are 2048, 4096
-        instanceMemoryMB: 2048
-        // valid range is [40, 1000]
-        maximumInstanceCount: 40
-      }
-      runtime: { 
-        name: 'python'
-        version: pythonVersion
-      }
-    }
     httpsOnly: true
     publicNetworkAccess: 'Enabled'
     serverFarmId: hostingPlan.id
@@ -92,11 +71,8 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
           name: 'GITHUB_PROVIDER_AUTHENTICATION_SECRET'
           value: githubAuthClientSecret
         }
-        {
-          name: 'WEBSIITE_RUN_FROM_PACKAGE'
-          value: '0'
-        }
       ]
+      linuxFxVersion: 'PYTHON|${pythonVersion}'
       minTlsVersion: '1.2'
     }
   }

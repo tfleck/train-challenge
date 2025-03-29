@@ -100,3 +100,4 @@ jobs:
           app-name: ${{ steps.bicep-deploy.outputs.functionAppName }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           respect-funcignore: true
+          remote-build: false
