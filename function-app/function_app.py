@@ -1,4 +1,4 @@
-import logging
+# import logging
 
 from os import getenv
 
@@ -16,9 +16,9 @@ configure_azure_monitor(
     connection_string=getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"),
     logger_name="trainchallenge",  # Set the namespace for the logger
 )
-logger = logging.getLogger(
-    "trainchallenge"
-)  # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
+# logger = logging.getLogger(
+#     "trainchallenge"
+# )  # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
 
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
@@ -37,7 +37,10 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
         "http_trigger_span",
         context=extract(carrier),
     ):
-        logger.info("Python HTTP trigger function processed a request.")
+        print("Python HTTP trigger function processed a request.")
+
+        print(f"User id: {req.headers.get('x-ms-client-principal-id')}")
+        print(f"User name: {req.headers.get('x-ms-client-principal-name')}")
 
         name = req.params.get("name")
         if not name:
