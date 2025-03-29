@@ -39,6 +39,7 @@ jobs:
       
       - name: Setup Python Environment
         uses: actions/setup-python@v5
+        id: setup-python
         with:
           python-version-file: 'pyproject.toml' # Read python version from a file pyproject.toml
           cache: 'poetry' # caching poetry dependencies
