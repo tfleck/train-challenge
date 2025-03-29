@@ -15,3 +15,53 @@ dependencies = [
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+target-version = "py310"
+fix = true
+lint.unfixable = [
+    "ERA", # do not autoremove commented out code
+    "F401", # do not autoremove unused imports
+]
+line-length = 120
+lint.extend-select = [
+    "B", # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "C90", # mccabe
+    "E", "W", #pycodestyle
+    "ERA", # flake8-eradicate
+    "F", # pyflakes
+    "I", # isort
+    "N", # pep8-naming
+    "PD", # pandas-vet
+    "PGH", # pygrep
+    "PIE", # flake8-PIE
+    "RUF", # ruff checks
+    "S", # flake8-bandit
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "UP", # pyupgrade
+]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.isort]
+force-single-line = true
+lines-between-types = 1
+lines-after-imports = 2
+known-first-party = ["trainchallenge"]
+relative-imports-order = "closest-to-furthest"
+
+[tool.ruff.lint.per-file-ignores]
+"*/__init__.py" = [
+    "D104" # Missing docstring in public package
+]
+"*.ipynb" = [
+    "D", # disable all docstring checks
+    "ERA" # disable all eradicate checks
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"

@@ -1,0 +1,17 @@
+{
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+    },
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit",
+        },
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "charliermarsh.ruff",
+    },
+    "ruff.configuration": "pyproject.toml",
+    "python.analysis.autoImportCompletions": true,
+    "notebook.formatOnSave.enabled": true,
+    "ruff.nativeServer": "on"
+}
