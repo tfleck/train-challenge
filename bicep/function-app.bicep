@@ -64,8 +64,8 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         }
       }
       scaleAndConcurrency: {
-        // valid values are 512, 2048, 4096
-        instanceMemoryMB: 512
+        // valid values are 2048, 4096
+        instanceMemoryMB: 2048
         // valid range is [40, 1000]
         maximumInstanceCount: 40
       }
