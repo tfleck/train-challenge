@@ -1,3 +1,7 @@
+@description('The client id of the identity that is used to deploy app code.')
+@secure()
+param deployClientId string
+
 @description('The name of the managed identity to use for the function app.')
 param managedIdentityName string
 
@@ -81,8 +85,20 @@ resource storageBlobDataOwnerRole 'Microsoft.Authorization/roleDefinitions@2022-
   name: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
 }
 
+// Allow access from deployment oidc to storage account using a managed identity
+resource storageRoleAssignmentGh 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(storageAccount.id, storageBlobDataOwnerRole.id, deployClientId)
+  scope: storageAccount
+  properties: {
+    description: 'Allow access from github actions to storage account using a managed identity'
+    principalId:deployClientId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: storageBlobDataOwnerRole.id
+  }
+}
+
 // Allow access from function app to storage account using a managed identity
-resource storageRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+resource storageRoleAssignmentFa 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
   name: guid(storageAccount.id, storageBlobDataOwnerRole.id, managedIdentity.id)
   scope: storageAccount
   properties: {

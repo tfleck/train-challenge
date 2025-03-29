@@ -1,6 +1,10 @@
 @description('The version of Python to use for the function app.')
 param pythonVersion string
 
+@description('The client id of the identity that is used to deploy app code.')
+@secure()
+param deployClientId string
+
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' = {
   name: 'mi-fa-trainchallenge'
   location: resourceGroup().location
@@ -11,6 +15,7 @@ module storage 'storage.bicep' = {
   name: 'storage'
   params: {
     managedIdentityName: managedIdentity.name
+    deployClientId: deployClientId
   }
 }
 
