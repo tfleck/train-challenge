@@ -13,5 +13,12 @@
     "ruff.configuration": "pyproject.toml",
     "python.analysis.autoImportCompletions": true,
     "notebook.formatOnSave.enabled": true,
-    "ruff.nativeServer": "on"
+    "ruff.nativeServer": "on",
+    "azureFunctions.deploySubpath": "function-app",
+    "azureFunctions.scmDoBuildDuringDeployment": true,
+    "azureFunctions.projectLanguage": "Python",
+    "azureFunctions.projectRuntime": "~4",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.projectLanguageModel": 2,
+    "azureFunctions.pythonVenv": "${workspaceFolder}/.venv",
 }

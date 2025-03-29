@@ -17,6 +17,9 @@ on:
         required: true
         description: The name of the Azure resource group to deploy to.
 
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'function-app'       # set this to the path to your function app project, defaults to the repository root
+
 
 jobs:
   deploy:
@@ -38,6 +41,7 @@ jobs:
 
       - name: Bicep Deployment
         uses: azure/bicep-deploy@v2
+        id: bicep-deploy
         with:
           type: deploymentStack
           operation: create
@@ -49,3 +53,30 @@ jobs:
           template-file: ./bicep/main.bicep
           action-on-unmanage-resources: delete
           deny-settings-mode: none
+      
+      - name: Setup Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: 'pyproject.toml' # Read python version from a file pyproject.toml
+          cache: 'poetry' # caching poetry dependencies
+
+      - name: 'Resolve Project Dependencies Using Pip'
+        shell: bash
+        run: |
+          pushd '.'
+          python -m pip install --upgrade pip
+          pip install poetry
+          pip install poetry-plugin-export
+          poetry export --without-hashes --with api --format=requirements.txt > function-app/requirements.txt
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+          popd
+
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: ${{ steps.bicep-deploy.outputs.functionAppName }}
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          scm-do-build-during-deployment: true
+          enable-oryx-build: true
