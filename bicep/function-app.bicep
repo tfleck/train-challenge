@@ -1,7 +1,4 @@
 
-@description('The name of the managed identity to use for the function app.')
-param managedIdentityName string
-
 @description('The name of the storage account to use for the function app.')
 param storageAccountName string = ''
 
@@ -12,21 +9,13 @@ param deploymentBlobContainerName string
 param pythonVersion string
 
 // ------------------------------------------------
-// Managed Identity
-resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' existing = {
-  name: managedIdentityName
-}
-
-// ------------------------------------------------
 // Storage Account
-resource storage 'Microsoft.Storage/storageAccounts@2024-01-01' existing = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' existing = {
   name: storageAccountName
 }
 
 // ------------------------------------------------
 // Function App
-
-
 resource hostingPlan 'Microsoft.Web/serverfarms@2024-04-01' = {
   name: 'hp-trainchallenge'
   location: resourceGroup().location
@@ -46,10 +35,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
   location: resourceGroup().location
   tags: resourceGroup().tags
   identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentity.id}': {}
-    }
+    type: 'SystemAssigned'
   }
   kind: 'functionapp,linux'
   properties: {
@@ -59,10 +45,9 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
       deployment: {
         storage: {
           type: 'blobContainer'
-          value: '${storage.properties.primaryEndpoints.blob}${deploymentBlobContainerName}'
+          value: '${storageAccount.properties.primaryEndpoints.blob}${deploymentBlobContainerName}'
           authentication: {
-            type: 'UserAssignedIdentity'
-            userAssignedIdentityResourceId: managedIdentity.id
+            type: 'SystemAssignedIdentity'
           }
         }
       }
@@ -84,15 +69,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
       appSettings: [
         {
           name: 'AzureWebJobsStorage__accountName'
-          value: storage.name
-        }
-        {
-          name: 'AzureWebJobsStorage__credential'
-          value: 'managedIdentity'
-        }
-        {
-          name: 'AzureWebJobsStorage__clientId'
-          value: managedIdentity.properties.clientId
+          value: storageAccount.name
         }
       ]
       minTlsVersion: '1.2'
@@ -100,8 +77,26 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
   }
 }
 
+// ------------------------------------------------
+// Role Assignments
+resource storageBlobDataOwnerRole 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+  scope: subscription()
+  name: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+}
+
+// Allow access from function app to storage account using a managed identity
+resource storageRoleAssignmentFa 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(storageAccount.id, storageBlobDataOwnerRole.id, functionApp.name)
+  scope: storageAccount
+  properties: {
+    description: 'Allow access from function app to storage account using a managed identity'
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: storageBlobDataOwnerRole.id
+  }
+}
+
 
 // --------------------------------------------
 // Outputs
-
 output functionAppName string = functionApp.name
