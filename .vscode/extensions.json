@@ -6,5 +6,6 @@
         "charliermarsh.ruff",
         "mhutchie.git-graph",
         "gruntfuggly.todo-tree",
+        "ms-azuretools.vscode-azurefunctions",
     ]
 }
