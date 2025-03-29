@@ -92,6 +92,10 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
           name: 'GITHUB_PROVIDER_AUTHENTICATION_SECRET'
           value: githubAuthClientSecret
         }
+        {
+          name:'WEBSIITE_RUN_FROM_PACKAGE'
+          value:'1'
+        }
       ]
       minTlsVersion: '1.2'
     }

@@ -1,3 +1,4 @@
+import json
 import logging
 
 from os import getenv
@@ -8,20 +9,29 @@ from azure.functions import Context
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
 from opentelemetry.propagate import extract
+from shapely import Point
+
+import trainchallenge as tc
 
 
 # Configure OpenTelemetry to use Azure Monitor with the
 # APPLICATIONINSIGHTS_CONNECTION_STRING environment variable.
-configure_azure_monitor(
-    connection_string=getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"),
-    logger_name="trainchallenge",  # Set the namespace for the logger
-)
+ai_conn_str = getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
+if ai_conn_str:
+    configure_azure_monitor(
+        connection_string=ai_conn_str,
+        logger_name="trainchallenge",  # Set the namespace for the logger
+    )
+
+
+# Authentiation is done by Azure App Service proxy, so we set the auth level to anonymous.
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+
 logger = logging.getLogger(
     "trainchallenge"
 )  # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
 
-# Authentiation is done by Azure App Service proxy, so we set the auth level to anonymous.
-app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+septa_gdf = tc.septa.load_regional_rail_data()
 
 
 @app.route(route="http_trigger")
@@ -46,21 +56,69 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
         logger.info(f"User id: {req.headers.get('x-ms-client-principal-id')}")
         logger.info(f"User name: {req.headers.get('x-ms-client-principal-name')}")
 
-        name = req.params.get("name")
-        if not name:
+        lat_input = req.params.get("latitude")
+        if not lat_input:
             try:
                 req_body = req.get_json()
             except ValueError:
-                pass
+                return func.HttpResponse(
+                    "Invalid JSON in request body",
+                    status_code=400,
+                )
             else:
-                name = req_body.get("name")
+                lat_input = req_body.get("latitude")
 
-        if name:
-            return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-        else:
+        lat_float = None
+        try:
+            lat_float = float(lat_input)
+        except ValueError:
             return func.HttpResponse(
-                "This HTTP triggered function executed successfully. "
-                "Pass a name in the query string or in the request body "
-                "for a personalized response.",
-                status_code=200,
+                "Invalid latitude value. Must be a float.",
+                status_code=400,
             )
+
+        long_input = req.params.get("longitude")
+        if not long_input:
+            try:
+                req_body = req.get_json()
+            except ValueError:
+                return func.HttpResponse(
+                    "Invalid JSON in request body",
+                    status_code=400,
+                )
+            else:
+                long_input = req_body.get("longitude")
+
+        long_float = None
+        try:
+            long_float = float(long_input)
+        except ValueError:
+            return func.HttpResponse(
+                "Invalid longitude value. Must be a float.",
+                status_code=400,
+            )
+
+        # check that lat and long are not None
+        if lat_float is None or long_input is None:
+            return func.HttpResponse(
+                "Please pass latitude and longitude in the query string or in the request body",
+                status_code=400,
+            )
+
+        p = Point(long_float, lat_float, 0)
+        nearest_row_idx = tc.common.get_nearest_point(p, septa_gdf["geometry"])  # type: ignore[reportArgumentType]
+
+        nearest_station = septa_gdf.loc[nearest_row_idx]
+
+        ret = {
+            "stop_id": nearest_station.stop_id,
+            "station_name": nearest_station.station_name,
+            "latitude": nearest_station.geometry.y,
+            "longitude": nearest_station.geometry.x,
+        }
+
+        return func.HttpResponse(
+            json.dumps(ret),
+            mimetype="application/json",
+            status_code=200,
+        )
