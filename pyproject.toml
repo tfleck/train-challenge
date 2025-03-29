@@ -19,6 +19,7 @@ optional = true
 
 [tool.poetry.group.api.dependencies]
 azure-functions = "^1.21.3"
+azure-monitor-opentelemetry = "^1.6.5"
 
 [tool.poetry.group.dev]
 optional = true
