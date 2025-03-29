@@ -1,4 +1,4 @@
-# import logging
+import logging
 
 from os import getenv
 
@@ -16,11 +16,11 @@ configure_azure_monitor(
     connection_string=getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"),
     logger_name="trainchallenge",  # Set the namespace for the logger
 )
-# logger = logging.getLogger(
-#     "trainchallenge"
-# )  # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
+logger = logging.getLogger(
+    "trainchallenge"
+)  # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
 
-
+# Authentiation is done by Azure App Service proxy, so we set the auth level to anonymous.
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 
@@ -37,13 +37,14 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
         "http_trigger_span",
         context=extract(carrier),
         attributes={
-            "user_id": str(req.headers.get("x-ms-client-principal-id")),
+            "user.id": str(req.headers.get("x-ms-client-principal-id")),
+            "user.name": str(req.headers.get("x-ms-client-principal-name")),
         },
     ):
-        print("Python HTTP trigger function processed a request.")
+        logger.info("Python HTTP trigger function processed a request.")
 
-        print(f"User id: {req.headers.get('x-ms-client-principal-id')}")
-        print(f"User name: {req.headers.get('x-ms-client-principal-name')}")
+        logger.info(f"User id: {req.headers.get('x-ms-client-principal-id')}")
+        logger.info(f"User name: {req.headers.get('x-ms-client-principal-name')}")
 
         name = req.params.get("name")
         if not name:
@@ -58,6 +59,8 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
             return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
         else:
             return func.HttpResponse(
-                "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
+                "This HTTP triggered function executed successfully. "
+                "Pass a name in the query string or in the request body "
+                "for a personalized response.",
                 status_code=200,
             )
