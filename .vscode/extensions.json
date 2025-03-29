@@ -7,5 +7,6 @@
         "mhutchie.git-graph",
         "gruntfuggly.todo-tree",
         "ms-azuretools.vscode-azurefunctions",
+        "ms-azuretools.vscode-bicep"
     ]
 }
