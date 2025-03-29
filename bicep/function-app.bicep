@@ -93,8 +93,8 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
           value: githubAuthClientSecret
         }
         {
-          name:'WEBSIITE_RUN_FROM_PACKAGE'
-          value:'1'
+          name: 'WEBSIITE_RUN_FROM_PACKAGE'
+          value: '0'
         }
       ]
       minTlsVersion: '1.2'
