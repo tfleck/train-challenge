@@ -6,7 +6,7 @@ param deployClientId string
 // Storage Account
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
-  name: 'satrainchallenge'
+  name: 'satrainchallenge2'
   location: resourceGroup().location
   tags: resourceGroup().tags
   kind: 'StorageV2'

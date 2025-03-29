@@ -30,7 +30,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' existing 
 // ------------------------------------------------
 // Function App
 resource hostingPlan 'Microsoft.Web/serverfarms@2024-04-01' = {
-  name: 'hp-trainchallenge'
+  name: 'hp-trainchallenge2'
   location: resourceGroup().location
   tags: resourceGroup().tags
   kind: 'functionapp,linux'
@@ -44,7 +44,7 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2024-04-01' = {
 }
 
 resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
-  name: 'fa-trainchallenge'
+  name: 'fa-trainchallenge2'
   location: resourceGroup().location
   tags: resourceGroup().tags
   identity: {

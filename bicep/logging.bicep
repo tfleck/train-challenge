@@ -2,7 +2,7 @@
 // --------------------------------------------------------------------
 // Log Analytics Workspace
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
-  name: 'la-trainchallenge'
+  name: 'la-trainchallenge2'
   location: resourceGroup().location
   tags: resourceGroup().tags
   properties: {
@@ -16,7 +16,7 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
 // ------------------------------------------------
 // Application Insights
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: 'ai-trainchallenge'
+  name: 'ai-trainchallenge2'
   location: resourceGroup().location
   tags: resourceGroup().tags
   kind: 'web'
