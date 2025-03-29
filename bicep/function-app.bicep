@@ -8,6 +8,9 @@ param storageAccountName string = ''
 @description('The name of the blob container to use for the function app deployment.')
 param deploymentBlobContainerName string
 
+@description('The version of Python to use for the function app.')
+param pythonVersion string
+
 // ------------------------------------------------
 // Managed Identity
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' existing = {
@@ -71,7 +74,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
       }
       runtime: { 
         name: 'python'
-        version: '3.11'
+        version: pythonVersion
       }
     }
     httpsOnly: true

@@ -1,3 +1,5 @@
+@description('The version of Python to use for the function app.')
+param pythonVersion string
 
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' = {
   name: 'mi-fa-trainchallenge'
@@ -18,6 +20,7 @@ module functionapp 'function-app.bicep' = {
         managedIdentityName: managedIdentity.name
         storageAccountName: storage.outputs.storageAccountName
         deploymentBlobContainerName: storage.outputs.deploymentBlobContainerName
+        pythonVersion: pythonVersion
     }
 }
 

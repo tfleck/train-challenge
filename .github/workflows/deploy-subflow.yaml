@@ -32,6 +32,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install poetry
+        run: |
+          pipx install poetry
+          pipx inject poetry poetry-plugin-export
+      
+      - name: Setup Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: 'pyproject.toml' # Read python version from a file pyproject.toml
+          cache: 'poetry' # caching poetry dependencies
+          cache-dependency-path: 'poetry.lock' # caching poetry dependencies
+
       - name: Azure login
         uses: azure/login@v2
         with:
@@ -53,21 +65,14 @@ jobs:
           template-file: ./bicep/main.bicep
           action-on-unmanage-resources: delete
           deny-settings-mode: none
-      
-      - name: Setup Python Environment
-        uses: actions/setup-python@v5
-        with:
-          python-version-file: 'pyproject.toml' # Read python version from a file pyproject.toml
-          cache: 'poetry' # caching poetry dependencies
+          parameters: '{"pythonVersion": "${{ steps.setup-python.outputs.python-version }}" }'
 
       - name: 'Resolve Project Dependencies Using Pip'
         shell: bash
         run: |
           pushd '.'
           python -m pip install --upgrade pip
-          pip install poetry
-          pip install poetry-plugin-export
-          poetry export --without-hashes --with api --format=requirements.txt > function-app/requirements.txt
+          poetry export --without-hashes --with api --format=requirements.txt > ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/requirements.txt
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           pip install -r requirements.txt --target=".python_packages/lib/site-packages"
           popd
