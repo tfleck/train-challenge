@@ -60,7 +60,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
       bypass: 'AzureServices'
       defaultAction: 'Allow'
     }
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: 'Enabled'
     supportsHttpsTrafficOnly: true
   }
 }
