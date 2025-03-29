@@ -36,6 +36,9 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
     with tracer.start_as_current_span(
         "http_trigger_span",
         context=extract(carrier),
+        attributes={
+            "user_id": str(req.headers.get("x-ms-client-principal-id")),
+        },
     ):
         print("Python HTTP trigger function processed a request.")
 
