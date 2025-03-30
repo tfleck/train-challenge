@@ -23,6 +23,8 @@ if ai_conn_str:
         logger_name="trainchallenge",  # Set the namespace for the logger
     )
 
+# Load the SEPTA Regional Rail data
+septa_gdf = tc.septa.load_regional_rail_data()
 
 # Authentiation is done by Azure App Service proxy, so we set the auth level to anonymous.
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
@@ -102,8 +104,6 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
                 "Please pass latitude and longitude in the query string or in the request body",
                 status_code=400,
             )
-
-        septa_gdf = tc.septa.load_regional_rail_data()
 
         p = Point(long_float, lat_float, 0)
         nearest_row_idx = tc.common.get_nearest_point(p, septa_gdf["geometry"])  # type: ignore[reportArgumentType]
