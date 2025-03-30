@@ -74,7 +74,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         // valid values are 2048, 4096
         instanceMemoryMB: 2048
         // valid range is [40, 1000]
-        maximumInstanceCount: 100
+        maximumInstanceCount: 250
         alwaysReady: [
           {
             instanceCount: 2
