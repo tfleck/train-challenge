@@ -11,13 +11,13 @@ param pythonVersion string
 @description('The name of the app insights instance to send logs to.')
 param appInsightsName string
 
-@description('The client id of the github oauth integration.')
-@secure()
-param githubAuthClientId string
+// @description('The client id of the github oauth integration.')
+// @secure()
+// param githubAuthClientId string
 
-@description('The client secret of the github oauth integration.')
-@secure()
-param githubAuthClientSecret string
+// @description('The client secret of the github oauth integration.')
+// @secure()
+// param githubAuthClientSecret string
 
 // ------------------------------------------------
 // Application Insights
@@ -74,7 +74,13 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         // valid values are 2048, 4096
         instanceMemoryMB: 2048
         // valid range is [40, 1000]
-        maximumInstanceCount: 40
+        maximumInstanceCount: 100
+        alwaysReady: [
+          {
+            instanceCount: 1
+            name: 'function:nearest_septa'
+          }
+        ]
       }
       runtime: { 
         name: 'python'
@@ -94,43 +100,44 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: appInsights.properties.ConnectionString
         }
-        {
-          name: 'GITHUB_PROVIDER_AUTHENTICATION_SECRET'
-          value: githubAuthClientSecret
-        }
+        // {
+        //   name: 'GITHUB_PROVIDER_AUTHENTICATION_SECRET'
+        //   value: githubAuthClientSecret
+        // }
       ]
       minTlsVersion: '1.2'
     }
   }
 }
 
-resource authsettings 'Microsoft.Web/sites/config@2022-03-01' = {
-  parent: functionApp
-  name: 'authsettingsV2'
-  properties: {
-    globalValidation: {
-      requireAuthentication:  true
-      unauthenticatedClientAction: 'Return401'
-    }
-    login: {
-      tokenStore: {
-        enabled: true
-      }
-    }
-    platform: {
-      enabled: true
-    }
-    identityProviders: {
-      gitHub: {
-        enabled: true
-        registration: {
-          clientId: githubAuthClientId
-          clientSecretSettingName: 'GITHUB_PROVIDER_AUTHENTICATION_SECRET'
-        }
-      }
-    }
-  }
-}
+// Settings for azure app service authentication
+// resource authsettings 'Microsoft.Web/sites/config@2022-03-01' = {
+//   parent: functionApp
+//   name: 'authsettingsV2'
+//   properties: {
+//     globalValidation: {
+//       requireAuthentication:  true
+//       unauthenticatedClientAction: 'Return401'
+//     }
+//     login: {
+//       tokenStore: {
+//         enabled: true
+//       }
+//     }
+//     platform: {
+//       enabled: true
+//     }
+//     identityProviders: {
+//       gitHub: {
+//         enabled: true
+//         registration: {
+//           clientId: githubAuthClientId
+//           clientSecretSettingName: 'GITHUB_PROVIDER_AUTHENTICATION_SECRET'
+//         }
+//       }
+//     }
+//   }
+// }
 
 // ------------------------------------------------
 // Role Assignments

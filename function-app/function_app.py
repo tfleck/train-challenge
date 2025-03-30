@@ -25,7 +25,7 @@ if ai_conn_str:
 septa_gdf = tc.septa.load_regional_rail_data()
 
 # Authentiation is done by Azure App Service proxy, so we set the auth level to anonymous.
-app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 # logger = logging.getLogger(
 #     "trainchallenge"
@@ -44,10 +44,10 @@ def nearest_septa(req: func.HttpRequest, context: Context) -> func.HttpResponse:
     with tracer.start_as_current_span(
         "http_trigger_span",
         context=extract(carrier),
-        attributes={
-            "user.id": str(req.headers.get("x-ms-client-principal-id")),
-            "user.name": str(req.headers.get("x-ms-client-principal-name")),
-        },
+        # attributes={
+        #     "user.id": str(req.headers.get("x-ms-client-principal-id")),
+        #     "user.name": str(req.headers.get("x-ms-client-principal-name")),
+        # },
     ):
         # parse and validate latitude input
         lat_input = req.params.get("latitude")

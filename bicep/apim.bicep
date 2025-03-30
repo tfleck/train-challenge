@@ -37,6 +37,11 @@ resource functionBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-pr
     description: 'Function App'
     url: 'https://${functionApp.properties.defaultHostName}/api' // Or your function app URL
     resourceId: uri(environment().resourceManager, functionApp.id)
+    credentials: {
+      header:{
+        'x-functions-key': functionApp.listKeys().functionKeys.default
+      }
+    }
   }
 }
 
@@ -52,6 +57,11 @@ resource functionApi 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' =
       'https'
     ]
     serviceUrl: 'https://${functionApp.properties.defaultHostName}/api'
+    subscriptionKeyParameterNames: {
+      header: 'Ocp-Apim-Subscription-Key'
+      query: 'subscription-key'
+    }
+    isCurrent: true
   }
 }
 
@@ -130,4 +140,9 @@ resource apimAppInsights 'Microsoft.ApiManagement/service/diagnostics@2024-06-01
       }
     }
   }
+}
+
+resource apimAppInsightsLogger 'Microsoft.ApiManagement/service/diagnostics/loggers@2018-01-01' = {
+  parent: apimAppInsights
+  name: 'ai-trainchallenge'
 }
