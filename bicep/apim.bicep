@@ -100,7 +100,7 @@ resource functionAppPolicy 'Microsoft.ApiManagement/service/apis/policies@2024-0
 
 resource functionApiLogger 'Microsoft.ApiManagement/service/loggers@2024-06-01-preview' = {
   parent: apim
-  name: 'functionLogger'
+  name: 'ai-trainchallenge'
   properties: {
     loggerType: 'applicationInsights'
     description: 'Application Insights logger'
