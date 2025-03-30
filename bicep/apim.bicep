@@ -51,7 +51,7 @@ resource functionApi 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' =
     protocols: [
       'https'
     ]
-    serviceUrl: 'https://${functionApp.properties.defaultHostName}'
+    serviceUrl: 'https://${functionApp.properties.defaultHostName}/api'
   }
 }
 
