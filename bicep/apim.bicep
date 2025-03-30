@@ -83,7 +83,7 @@ resource functionApi 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' =
 }
 
 var apimAllPolicyRaw = loadTextContent('./apim-policies/apim-all-policy.xml')
-var apimAllPolicy = replace(apimAllPolicyRaw, '__apiName__', functionBackend.name)
+var apimAllPolicy = replace(apimAllPolicyRaw, '__apiBackendName__', functionBackend.name)
 resource functionAppPolicy 'Microsoft.ApiManagement/service/apis/policies@2024-06-01-preview' = {
   parent: functionApi
   name: 'policy'
