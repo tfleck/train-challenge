@@ -131,6 +131,39 @@ resource septaApiPolicy 'Microsoft.ApiManagement/service/apis/operations/policie
   }
 }
 
+resource dcmetroApiOperation 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
+  name: 'nearest-dcmetro'
+  parent: functionApi
+  properties: {
+    displayName: 'nearest_dcmetro'
+    method: 'GET'
+    urlTemplate: '/nearest_dcmetro'
+    request:{
+      queryParameters: [
+        {
+          name: 'latitude'
+          required: true
+          type: 'number'
+        }
+        {
+          name: 'longitude'
+          required: true
+          type: 'number'
+        }
+      ]
+    }
+  }
+}
+
+resource dcmetroApiPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2024-06-01-preview' = {
+  parent: dcmetroApiOperation
+  name: 'policy'
+  properties: {
+    value: apimOpPolicy
+    format: 'xml'
+  }
+}
+
 resource functionApiLogger 'Microsoft.ApiManagement/service/loggers@2024-06-01-preview' = {
   parent: apim
   name: 'ai-trainchallenge'
