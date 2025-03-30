@@ -239,3 +239,14 @@ resource functionApiInsightsLogger 'Microsoft.ApiManagement/service/apis/diagnos
   parent: functionApiInsights
   name: appInsights.name
 }
+
+resource defaultSubscription 'Microsoft.ApiManagement/service/subscriptions@2024-06-01-preview' = {
+  parent: apim
+  name: 'master'
+  properties: {
+    scope: '${apim.id}/'
+    displayName: 'Built-in all-access subscription'
+    state: 'active'
+    allowTracing: false
+  }
+}
