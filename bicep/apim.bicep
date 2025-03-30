@@ -48,7 +48,7 @@ resource functionBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-pr
     resourceId: uri(environment().resourceManager, functionApp.id)
     credentials: {
       header:{
-        'x-functions-key': functionApp.listKeys().functionKeys.default
+        'x-functions-key': listKeys('${functionApp.id}/host/default', '2019-08-01').functionKeys.default
       }
     }
   }

@@ -78,7 +78,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         alwaysReady: [
           {
             instanceCount: 1
-            name: 'function:nearest_septa'
+            name: 'http'
           }
         ]
       }
