@@ -13,7 +13,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
 }
 
 resource apim 'Microsoft.ApiManagement/service@2024-06-01-preview' = {
-  name: 'apim-trainchallenge'
+  name: 'apim-${functionApp.name}'
   location: resourceGroup().location
   identity: {
     type: 'SystemAssigned'
