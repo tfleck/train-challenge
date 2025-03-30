@@ -1,5 +1,3 @@
-import logging
-
 from os import getenv
 
 import azure.functions as func
@@ -29,13 +27,13 @@ septa_gdf = tc.septa.load_regional_rail_data()
 # Authentiation is done by Azure App Service proxy, so we set the auth level to anonymous.
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
-logger = logging.getLogger(
-    "trainchallenge"
-)  # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
+# logger = logging.getLogger(
+#     "trainchallenge"
+# )  # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
 
 
-@app.route(route="http_trigger")
-def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
+@app.route(route="nearest_septa", auth_level=func.AuthLevel.ANONYMOUS)
+def nearest_septa(req: func.HttpRequest, context: Context) -> func.HttpResponse:
     # Store current TraceContext in dictionary format
     carrier = {
         "traceparent": context.trace_context.trace_parent,
@@ -51,11 +49,7 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
             "user.name": str(req.headers.get("x-ms-client-principal-name")),
         },
     ):
-        logger.info("Python HTTP trigger function processed a request.")
-
-        logger.info(f"User id: {req.headers.get('x-ms-client-principal-id')}")
-        logger.info(f"User name: {req.headers.get('x-ms-client-principal-name')}")
-
+        # parse and validate latitude input
         lat_input = req.params.get("latitude")
         if not lat_input:
             try:
@@ -77,6 +71,7 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
                 status_code=400,
             )
 
+        # parse and validate longitude input
         long_input = req.params.get("longitude")
         if not long_input:
             try:
@@ -105,11 +100,12 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
                 status_code=400,
             )
 
+        # get the nearest station
         p = Point(long_float, lat_float, 0)
         nearest_row_idx = tc.common.get_nearest_point(p, septa_gdf["geometry"])  # type: ignore[reportArgumentType]
-
         nearest_station = septa_gdf.loc[nearest_row_idx]
 
+        # return the nearest station as a GeoJSON feature
         ret = geojson.Feature(
             geometry=nearest_station.geometry,
             properties={
