@@ -120,7 +120,6 @@ def http_trigger(req: func.HttpRequest, context: Context) -> func.HttpResponse:
 
         return func.HttpResponse(
             geojson.dumps(ret),
-            # '{"message": "Hello, World!"}',
             mimetype="application/json",
             status_code=200,
         )
