@@ -36,4 +36,11 @@ module functionapp 'function-app.bicep' = {
     }
 }
 
+module apim 'apim.bicep' = {
+  name: 'apim'
+  params: {
+    functionAppName: functionapp.outputs.functionAppName
+  }
+}
+
 output functionAppName string = functionapp.outputs.functionAppName
