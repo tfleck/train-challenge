@@ -1,8 +1,15 @@
 @description('The name of the function app to use for the backend.')
 param functionAppName string
 
+@description('The name of the app insights instance to send logs to.')
+param appInsightsName string
+
 resource functionApp 'Microsoft.Web/sites@2024-04-01' existing = {
   name: functionAppName
+}
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: appInsightsName
 }
 
 resource apim 'Microsoft.ApiManagement/service@2024-06-01-preview' = {
@@ -68,6 +75,59 @@ resource functionApiOperation 'Microsoft.ApiManagement/service/apis/operations@2
           type: 'number'
         }
       ]
+    }
+  }
+}
+
+resource functionApiLogger 'Microsoft.ApiManagement/service/loggers@2024-06-01-preview' = {
+  parent: apim
+  name: 'functionLogger'
+  properties: {
+    loggerType: 'applicationInsights'
+    description: 'Application Insights logger'
+    credentials: {
+      instrumentationKey: appInsights.properties.InstrumentationKey
+    }
+    isBuffered: true
+    resourceId: functionApp.id
+  }
+}
+
+resource apimAppInsights 'Microsoft.ApiManagement/service/diagnostics@2024-06-01-preview' = {
+  parent: apim
+  name: 'applicationinsights'
+  properties: {
+    alwaysLog: 'allErrors'
+    httpCorrelationProtocol: 'W3C'
+    logClientIp: true
+    loggerId: functionApiLogger.id
+    sampling: {
+      samplingType: 'fixed'
+      percentage: json('100')
+    }
+    frontend: {
+      request: {
+        dataMasking: {
+          queryParams: [
+            {
+              value: '*'
+              mode: 'Hide'
+            }
+          ]
+        }
+      }
+    }
+    backend: {
+      request: {
+        dataMasking: {
+          queryParams: [
+            {
+              value: '*'
+              mode: 'Hide'
+            }
+          ]
+        }
+      }
     }
   }
 }
