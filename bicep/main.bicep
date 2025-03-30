@@ -5,13 +5,13 @@ param pythonVersion string
 @secure()
 param deployClientId string
 
-// @description('The client id of the github oauth integration.')
-// @secure()
-// param githubAuthClientId string
+@description('The client id of the github oauth integration.')
+@secure()
+param githubAuthClientId string
 
-// @description('The client secret of the github oauth integration.')
-// @secure()
-// param githubAuthClientSecret string
+@description('The client secret of the github oauth integration.')
+@secure()
+param githubAuthClientSecret string
 
 module logging 'logging.bicep' = {
   name: 'logging'
@@ -31,8 +31,8 @@ module functionapp 'function-app.bicep' = {
         deploymentBlobContainerName: storage.outputs.deploymentBlobContainerName
         pythonVersion: pythonVersion
         storageAccountName: storage.outputs.storageAccountName
-        // githubAuthClientId: githubAuthClientId
-        // githubAuthClientSecret: githubAuthClientSecret
+        githubAuthClientId: githubAuthClientId
+        githubAuthClientSecret: githubAuthClientSecret
     }
 }
 
