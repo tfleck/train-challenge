@@ -78,8 +78,6 @@ jobs:
           parameters: '{
             "pythonVersion": "${{ steps.get-python-version.outputs.python-version }}",
             "deployClientId": "${{ secrets.AZURE_CLIENT_ID }}",
-            "githubAuthClientId": "${{ secrets.GH_AUTH_CLIENT_ID }}",
-            "githubAuthClientSecret": "${{ secrets.GH_AUTH_CLIENT_SECRET }}"
           }'
 
       - name: 'Resolve Project Dependencies Using Pip'

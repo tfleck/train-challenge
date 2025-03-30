@@ -89,6 +89,15 @@ resource functionApiOperation 'Microsoft.ApiManagement/service/apis/operations@2
   }
 }
 
+resource functionAppPolicy 'Microsoft.ApiManagement/service/apis/policies@2024-06-01-preview' = {
+  parent: functionApi
+  name: 'policy'
+  properties: {
+    value: '<!--\r\n    - Policies are applied in the order they appear.\r\n    - Position <base/> inside a section to inherit policies from the outer scope.\r\n    - Comments within policies are not preserved.\r\n-->\r\n<!-- Add policies as children to the <inbound>, <outbound>, <backend>, and <on-error> elements -->\r\n<policies>\r\n  <!-- Throttle, authorize, validate, cache, or transform the requests -->\r\n  <inbound>\r\n    <base />\r\n    <cache-lookup vary-by-developer="false" vary-by-developer-groups="false" allow-private-response-caching="false" must-revalidate="false" downstream-caching-type="none" caching-type="internal">\r\n      <vary-by-query-parameter>latitude</vary-by-query-parameter>\r\n      <vary-by-query-parameter>longitude</vary-by-query-parameter>\r\n    </cache-lookup>\r\n    <rate-limit calls="10" renewal-period="60" />\r\n  </inbound>\r\n  <!-- Control if and how the requests are forwarded to services  -->\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <!-- Customize the responses -->\r\n  <outbound>\r\n    <base />\r\n    <cache-store duration="3600" />\r\n  </outbound>\r\n  <!-- Handle exceptions and customize error responses  -->\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>'
+    format: 'xml'
+  }
+}
+
 resource functionApiLogger 'Microsoft.ApiManagement/service/loggers@2024-06-01-preview' = {
   parent: apim
   name: 'functionLogger'
