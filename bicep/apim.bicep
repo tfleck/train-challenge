@@ -48,9 +48,26 @@ resource functionBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-pr
     resourceId: uri(environment().resourceManager, functionApp.id)
     credentials: {
       header:{
-        'x-functions-key': listKeys('${functionApp.id}/host/default', '2019-08-01').functionKeys.default
+        'x-functions-key': [
+          '{{${faApiKey.name}}}'
+        ]
       }
     }
+  }
+}
+
+resource faApiKey 'Microsoft.ApiManagement/service/properties@2019-01-01' = {
+  parent: apim
+  name: '${functionApp.name}-key'
+  properties: {
+    displayName: '${functionApp.name}-key'
+    value: listKeys('${functionApp.id}/host/default', '2019-08-01').functionKeys.default
+    tags: [
+      'key'
+      'function'
+      'auto'
+    ]
+    secret: true
   }
 }
 
@@ -171,7 +188,7 @@ resource apimAppInsights 'Microsoft.ApiManagement/service/diagnostics@2024-06-01
 
 resource apimAppInsightsLogger 'Microsoft.ApiManagement/service/diagnostics/loggers@2018-01-01' = {
   parent: apimAppInsights
-  name: 'ai-trainchallenge'
+  name: appInsights.name
 }
 
 
@@ -220,5 +237,5 @@ resource functionApiInsights 'Microsoft.ApiManagement/service/apis/diagnostics@2
 
 resource functionApiInsightsLogger 'Microsoft.ApiManagement/service/apis/diagnostics/loggers@2018-01-01' = {
   parent: functionApiInsights
-  name: 'ai-trainchallenge'
+  name: appInsights.name
 }
