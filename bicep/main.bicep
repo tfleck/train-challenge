@@ -27,7 +27,7 @@ module storage 'storage.bicep' = {
 module functionapp 'function-app.bicep' = {
     name: 'functionapp'
     params: {
-        aiConnectionString: logging.outputs.aiConnectionString
+        appInsightsName: logging.outputs.appInsightsName
         deploymentBlobContainerName: storage.outputs.deploymentBlobContainerName
         pythonVersion: pythonVersion
         storageAccountName: storage.outputs.storageAccountName
@@ -39,6 +39,7 @@ module functionapp 'function-app.bicep' = {
 module apim 'apim.bicep' = {
   name: 'apim'
   params: {
+    appInsightsName: logging.outputs.appInsightsName
     functionAppName: functionapp.outputs.functionAppName
   }
 }

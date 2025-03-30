@@ -28,5 +28,5 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-output aiConnectionString string = appInsights.properties.ConnectionString
+output appInsightsName string = appInsights.name
 

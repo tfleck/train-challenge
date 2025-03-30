@@ -8,9 +8,8 @@ param deploymentBlobContainerName string
 @description('The version of Python to use for the function app.')
 param pythonVersion string
 
-@description('The connection string for Application Insights.')
-@secure()
-param aiConnectionString string
+@description('The name of the app insights instance to send logs to.')
+param appInsightsName string
 
 @description('The client id of the github oauth integration.')
 @secure()
@@ -19,6 +18,13 @@ param githubAuthClientId string
 @description('The client secret of the github oauth integration.')
 @secure()
 param githubAuthClientSecret string
+
+// ------------------------------------------------
+// Application Insights
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: appInsightsName
+}
 
 
 // ------------------------------------------------
@@ -86,7 +92,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-          value: aiConnectionString
+          value: appInsights.properties.ConnectionString
         }
         {
           name: 'GITHUB_PROVIDER_AUTHENTICATION_SECRET'
