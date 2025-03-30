@@ -29,6 +29,15 @@ resource apim 'Microsoft.ApiManagement/service@2024-06-01-preview' = {
   }
 }
 
+resource apimPolicy 'Microsoft.ApiManagement/service/policies@2024-06-01-preview' = {
+  parent: apim
+  name: 'policy'
+  properties: {
+    value: '<!--\r\n    IMPORTANT:\r\n    - Policy elements can appear only within the <inbound>, <outbound>, <backend> section elements.\r\n    - Only the <forward-request> policy element can appear within the <backend> section element.\r\n    - To apply a policy to the incoming request (before it is forwarded to the backend service), place a corresponding policy element within the <inbound> section element.\r\n    - To apply a policy to the outgoing response (before it is sent back to the caller), place a corresponding policy element within the <outbound> section element.\r\n    - To add a policy position the cursor at the desired insertion point and click on the round button associated with the policy.\r\n    - To remove a policy, delete the corresponding policy statement from the policy document.\r\n    - Policies are applied in the order of their appearance, from the top down.\r\n-->\r\n<policies>\r\n  <inbound></inbound>\r\n  <backend>\r\n    <forward-request />\r\n  </backend>\r\n  <outbound></outbound>\r\n</policies>'
+    format: 'xml'
+  }
+}
+
 resource functionBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-preview' = {
   name: 'fa-backend'
   parent: apim
@@ -52,7 +61,7 @@ resource functionApi 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' =
     path: 'api'
     apiType: 'http'
     displayName: functionApp.name
-    subscriptionRequired: false // Or true, depending on your needs
+    subscriptionRequired: true
     protocols: [
       'https'
     ]
@@ -65,7 +74,16 @@ resource functionApi 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' =
   }
 }
 
-resource functionApiOperation 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
+resource functionAppPolicy 'Microsoft.ApiManagement/service/apis/policies@2024-06-01-preview' = {
+  parent: functionApi
+  name: 'policy'
+  properties: {
+    value: '<!--\r\n    - Policies are applied in the order they appear.\r\n    - Position <base/> inside a section to inherit policies from the outer scope.\r\n    - Comments within policies are not preserved.\r\n-->\r\n<!-- Add policies as children to the <inbound>, <outbound>, <backend>, and <on-error> elements -->\r\n<policies>\r\n  <!-- Throttle, authorize, validate, cache, or transform the requests -->\r\n  <inbound>\r\n    <base />\r\n    <cache-lookup vary-by-developer="false" vary-by-developer-groups="false" allow-private-response-caching="false" must-revalidate="false" downstream-caching-type="none" caching-type="internal">\r\n      <vary-by-query-parameter>latitude</vary-by-query-parameter>\r\n      <vary-by-query-parameter>longitude</vary-by-query-parameter>\r\n    </cache-lookup>\r\n    <rate-limit calls="10" renewal-period="60" />\r\n  </inbound>\r\n  <!-- Control if and how the requests are forwarded to services  -->\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <!-- Customize the responses -->\r\n  <outbound>\r\n    <base />\r\n    <cache-store duration="3600" />\r\n  </outbound>\r\n  <!-- Handle exceptions and customize error responses  -->\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>'
+    format: 'xml'
+  }
+}
+
+resource septaApiOperation 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
   name: 'nearest-septa'
   parent: functionApi
   properties: {
@@ -89,11 +107,11 @@ resource functionApiOperation 'Microsoft.ApiManagement/service/apis/operations@2
   }
 }
 
-resource functionAppPolicy 'Microsoft.ApiManagement/service/apis/policies@2024-06-01-preview' = {
-  parent: functionApi
+resource septaApiPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2024-06-01-preview' = {
+  parent: septaApiOperation
   name: 'policy'
   properties: {
-    value: '<!--\r\n    - Policies are applied in the order they appear.\r\n    - Position <base/> inside a section to inherit policies from the outer scope.\r\n    - Comments within policies are not preserved.\r\n-->\r\n<!-- Add policies as children to the <inbound>, <outbound>, <backend>, and <on-error> elements -->\r\n<policies>\r\n  <!-- Throttle, authorize, validate, cache, or transform the requests -->\r\n  <inbound>\r\n    <base />\r\n    <cache-lookup vary-by-developer="false" vary-by-developer-groups="false" allow-private-response-caching="false" must-revalidate="false" downstream-caching-type="none" caching-type="internal">\r\n      <vary-by-query-parameter>latitude</vary-by-query-parameter>\r\n      <vary-by-query-parameter>longitude</vary-by-query-parameter>\r\n    </cache-lookup>\r\n    <rate-limit calls="10" renewal-period="60" />\r\n  </inbound>\r\n  <!-- Control if and how the requests are forwarded to services  -->\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <!-- Customize the responses -->\r\n  <outbound>\r\n    <base />\r\n    <cache-store duration="3600" />\r\n  </outbound>\r\n  <!-- Handle exceptions and customize error responses  -->\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>'
+    value: '<!--\r\n    - Policies are applied in the order they appear.\r\n    - Position <base/> inside a section to inherit policies from the outer scope.\r\n    - Comments within policies are not preserved.\r\n-->\r\n<!-- Add policies as children to the <inbound>, <outbound>, <backend>, and <on-error> elements -->\r\n<policies>\r\n  <!-- Throttle, authorize, validate, cache, or transform the requests -->\r\n  <inbound>\r\n    <base />\r\n  </inbound>\r\n  <!-- Control if and how the requests are forwarded to services  -->\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <!-- Customize the responses -->\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <!-- Handle exceptions and customize error responses  -->\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>'
     format: 'xml'
   }
 }
@@ -153,5 +171,54 @@ resource apimAppInsights 'Microsoft.ApiManagement/service/diagnostics@2024-06-01
 
 resource apimAppInsightsLogger 'Microsoft.ApiManagement/service/diagnostics/loggers@2018-01-01' = {
   parent: apimAppInsights
+  name: 'ai-trainchallenge'
+}
+
+
+resource functionApiInsights 'Microsoft.ApiManagement/service/apis/diagnostics@2024-06-01-preview' = {
+  parent: functionApi
+  name: 'applicationinsights'
+  properties: {
+    alwaysLog: 'allErrors'
+    httpCorrelationProtocol: 'W3C'
+    logClientIp: true
+    loggerId: functionApiLogger.id
+    sampling: {
+      samplingType: 'fixed'
+      percentage: json('100')
+    }
+    frontend: {
+      request: {
+        headers: []
+        body: {
+          bytes: 0
+        }
+      }
+      response: {
+        headers: []
+        body: {
+          bytes: 0
+        }
+      }
+    }
+    backend: {
+      request: {
+        headers: []
+        body: {
+          bytes: 0
+        }
+      }
+      response: {
+        headers: []
+        body: {
+          bytes: 0
+        }
+      }
+    }
+  }
+}
+
+resource functionApiInsightsLogger 'Microsoft.ApiManagement/service/apis/diagnostics/loggers@2018-01-01' = {
+  parent: functionApiInsights
   name: 'ai-trainchallenge'
 }
