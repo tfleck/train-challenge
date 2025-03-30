@@ -33,10 +33,6 @@ resource functionBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-pr
   name: 'fa-backend'
   parent: apim
   properties: {
-    protocol: 'http'
-    description: 'Function App'
-    url: 'https://${functionApp.properties.defaultHostName}/api' // Or your function app URL
-    resourceId: uri(environment().resourceManager, functionApp.id)
     credentials: {
       header:{
         'x-functions-key': [
@@ -44,6 +40,14 @@ resource functionBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-pr
         ]
       }
     }
+    description: 'Function App'
+    protocol: 'http'
+    resourceId: uri(environment().resourceManager, functionApp.id)
+    tls: {
+      validateCertificateChain: true
+      validateCertificateName: true
+    }
+    url: 'https://${functionApp.properties.defaultHostName}/api' // Or your function app URL
   }
 }
 

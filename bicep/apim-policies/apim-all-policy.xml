@@ -1,20 +1,13 @@
 <!-- apim all operations level scope -->
 <policies>
     <inbound>
-        <base />
-        <set-backend-service id="functionapp-backend-policy" backend-id="__apiBackendName__" />
         <set-header name="Ocp-Apim-Subscription-Key" exists-action="delete" />
-        <cache-lookup vary-by-developer="false" vary-by-developer-groups="false" allow-private-response-caching="false" must-revalidate="false" downstream-caching-type="public" />
-        <rate-limit calls="10" renewal-period="60" />
     </inbound>
     <backend>
-        <base />
+        <forward-request />
     </backend>
-    <outbound>
-        <base />
-        <cache-store duration="3600" />
+    <outbound> 
     </outbound>
     <on-error>
-        <base />
     </on-error>
 </policies>

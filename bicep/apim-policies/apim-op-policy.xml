@@ -2,15 +2,16 @@
 <policies>
     <inbound>
         <base />
-        <set-query-parameter name="code" exists-action="append">
-            <value>__key__</value>
-        </set-query-parameter>
+        <cache-lookup vary-by-developer="false" vary-by-developer-groups="false" allow-private-response-caching="false" must-revalidate="false" downstream-caching-type="public" />
+        <rate-limit calls="10" renewal-period="60" />
+        <set-backend-service id="functionapp-backend-policy" backend-id="__apiBackendName__" />
     </inbound>
     <backend>
         <base />
     </backend>
     <outbound>
         <base />
+        <cache-store duration="3600" />
     </outbound>
     <on-error>
         <base />
