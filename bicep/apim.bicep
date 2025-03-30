@@ -86,8 +86,7 @@ resource functionApi 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' =
   }
 }
 
-var apimAllPolicyRaw = loadTextContent('./apim-policies/apim-all-policy.xml')
-var apimAllPolicy = replace(apimAllPolicyRaw, '__apiBackendName__', functionBackend.name)
+var apimAllPolicy = loadTextContent('./apim-policies/apim-all-policy.xml')
 resource functionAppPolicy 'Microsoft.ApiManagement/service/apis/policies@2024-06-01-preview' = {
   parent: functionApi
   name: 'policy'
@@ -121,7 +120,8 @@ resource septaApiOperation 'Microsoft.ApiManagement/service/apis/operations@2024
   }
 }
 
-var apimOpPolicy = loadTextContent('./apim-policies/apim-op-policy.xml')
+var apimOpPolicyRaw = loadTextContent('./apim-policies/apim-op-policy.xml')
+var apimOpPolicy = replace(apimOpPolicyRaw, '__apiBackendName__', functionBackend.name)
 resource septaApiPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2024-06-01-preview' = {
   parent: septaApiOperation
   name: 'policy'
