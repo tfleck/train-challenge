@@ -77,7 +77,7 @@ jobs:
           deny-settings-mode: none
           parameters: '{
             "pythonVersion": "${{ steps.get-python-version.outputs.python-version }}",
-            "deployClientId": "${{ secrets.AZURE_CLIENT_ID }}",
+            "deployClientId": "${{ secrets.AZURE_CLIENT_ID }}"
           }'
 
       - name: 'Resolve Project Dependencies Using Pip'
