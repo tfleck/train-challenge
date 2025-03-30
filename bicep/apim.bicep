@@ -5,7 +5,7 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' existing = {
   name: functionAppName
 }
 
-resource apim 'Microsoft.ApiManagement/service@2024-05-01' = {
+resource apim 'Microsoft.ApiManagement/service@2024-06-01-preview' = {
   name: 'apim-trainchallenge'
   location: resourceGroup().location
   identity: {
@@ -22,7 +22,7 @@ resource apim 'Microsoft.ApiManagement/service@2024-05-01' = {
   }
 }
 
-resource functionBackend 'Microsoft.ApiManagement/service/backends@2024-05-01' = {
+resource functionBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-preview' = {
   name: 'fa-backend'
   parent: apim
   properties: {
@@ -33,7 +33,7 @@ resource functionBackend 'Microsoft.ApiManagement/service/backends@2024-05-01' =
   }
 }
 
-resource functionApi 'Microsoft.ApiManagement/service/apis@2024-05-01' = {
+resource functionApi 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' = {
   name: 'fa-api'
   parent: apim
   properties: {
