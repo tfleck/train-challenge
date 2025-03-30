@@ -47,3 +47,27 @@ resource functionApi 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' =
     serviceUrl: 'https://${functionApp.properties.defaultHostName}'
   }
 }
+
+resource functionApiOperation 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
+  name: 'nearest-septa'
+  parent: functionApi
+  properties: {
+    displayName: 'nearest_septa'
+    method: 'GET'
+    urlTemplate: '/nearest_septa'
+    request:{
+      queryParameters: [
+        {
+          name: 'latitude'
+          required: true
+          type: 'number'
+        }
+        {
+          name: 'longitude'
+          required: true
+          type: 'number'
+        }
+      ]
+    }
+  }
+}
