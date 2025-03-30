@@ -73,7 +73,7 @@ jobs:
           scope: resourceGroup
           resource-group-name: ${{ secrets.RESOURCE_GROUP_NAME }}
           template-file: ./bicep/main.bicep
-          action-on-unmanage-resources: delete
+          action-on-unmanage-resources: detach
           deny-settings-mode: none
           parameters: '{
             "pythonVersion": "${{ steps.get-python-version.outputs.python-version }}",
