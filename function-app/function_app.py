@@ -32,7 +32,7 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 # )  # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
 
 
-@app.route(route="nearest_septa", auth_level=func.AuthLevel.ANONYMOUS)
+@app.route(route="nearest_septa")
 def nearest_septa(req: func.HttpRequest, context: Context) -> func.HttpResponse:
     # Store current TraceContext in dictionary format
     carrier = {
