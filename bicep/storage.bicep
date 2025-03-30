@@ -18,7 +18,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
     allowBlobPublicAccess: false
     allowCrossTenantReplication: false
     allowSharedKeyAccess: true
-    defaultToOAuthAuthentication: true
     encryption: {
       keySource: 'Microsoft.Storage'
       services: {
