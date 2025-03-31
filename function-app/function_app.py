@@ -127,7 +127,7 @@ def nearest_septa(req: func.HttpRequest, context: Context) -> func.HttpResponse:
         properties={
             "stop_id": nearest_station.stop_id,
             "station_name": nearest_station.station_name,
-            "gmaps_directions": f"https://www.google.com/maps/dir/?api=1&origin={lat_float},{long_float}&destination={nearest_station.geometry.y},{nearest_station.geometry.y}&travelmode=walking&dir_action=navigate",
+            "gmaps_directions": f"https://www.google.com/maps/dir/?api=1&origin={lat_float},{long_float}&destination={nearest_station.geometry.y},{nearest_station.geometry.x}&travelmode=walking&dir_action=navigate",
         },
     )
 
@@ -193,7 +193,7 @@ def nearest_dcmetro(req: func.HttpRequest, context: Context) -> func.HttpRespons
         properties={
             "stop_id": nearest_station.GIS_ID,
             "station_name": nearest_station.NAME,
-            "gmaps_directions": f"https://www.google.com/maps/dir/?api=1&origin={lat_float},{long_float}&destination={nearest_station.geometry.y},{nearest_station.geometry.y}&travelmode=walking&dir_action=navigate",
+            "gmaps_directions": f"https://www.google.com/maps/dir/?api=1&origin={lat_float},{long_float}&destination={nearest_station.geometry.y},{nearest_station.geometry.x}&travelmode=walking&dir_action=navigate",
         },
     )
 
