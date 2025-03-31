@@ -17,6 +17,16 @@ def load_regional_rail_data(kmz_pth: Path | None = None) -> gpd.GeoDataFrame:
     The function extracts the KMZ file, processes the KML data, and parses specific
     fields such as `stop_id` and `station_name` from the description.
 
+    Parameters
+    ----------
+    kmz_pth : Path, optional
+        The path to the KMZ file. If None, the function will look for the
+        file in the default location.
+        Defaults to None.
+        The default location is the `data` directory relative to the module's
+        location.
+        The file is named `SEPTARegionalRailStations2016.kmz`.
+
     Returns
     -------
     geopandas.GeoDataFrame
@@ -27,12 +37,6 @@ def load_regional_rail_data(kmz_pth: Path | None = None) -> gpd.GeoDataFrame:
     ------
     FileNotFoundError
         If the specified KMZ file does not exist.
-
-    Notes
-    -----
-    The function expects the KMZ file to be located in the `data` directory
-    relative to the module's location. Extracted files are stored in an
-    `extracted` subdirectory.
     """
 
     # check that the kmz file exists
