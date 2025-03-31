@@ -10,9 +10,24 @@
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "charliermarsh.ruff",
     },
-    "ruff.configuration": "pyproject.toml",
     "python.analysis.autoImportCompletions": true,
+    "python.testing.pytestArgs": [
+        "tests",
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "coverage-gutters.coverageBaseDir": "./.pytest_coverage",
+    "coverage-gutters.ignoredPathGlobs": "**/{node_modules,venv,.venv,vendor,.tox,.pytest_cache,tests}/**",
+    "coverage-gutters.coverageFileNames": [
+        "lcov.info",
+        "cov.xml",
+        "coverage.xml",
+        "cobertura.xml",
+        "jacoco.xml",
+        "coverage.cobertura.xml"
+    ],
     "notebook.formatOnSave.enabled": true,
+    "ruff.configuration": "pyproject.toml",
     "ruff.nativeServer": "on",
     "azureFunctions.deploySubpath": "function-app",
     "azureFunctions.scmDoBuildDuringDeployment": true,
@@ -21,4 +36,9 @@
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.projectLanguageModel": 2,
     "azureFunctions.pythonVenv": "${workspaceFolder}/.venv",
+    "todo-tree.highlights.useColourScheme": true,
+    "todo-tree.tree.groupedByTag": false,
+    "todo-tree.tree.groupedBySubTag": false,
+    "todo-tree.tree.expanded": true,
+    "todo-tree.tree.showCountsInTree": true
 }

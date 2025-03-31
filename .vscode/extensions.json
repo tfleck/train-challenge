@@ -7,6 +7,7 @@
     "charliermarsh.ruff",
     "mhutchie.git-graph",
     "gruntfuggly.todo-tree",
-    "ms-azuretools.vscode-bicep"
+    "ms-azuretools.vscode-bicep",
+    "ryanluker.vscode-coverage-gutters"
   ]
 }

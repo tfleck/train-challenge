@@ -32,6 +32,15 @@ ruff = "^0.11.2"
 pyright = "^1.1.398"
 debugpy = "^1.8.13"
 
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+coverage = "^7.8.0"
+tox = "^4.25.0"
+pytest = "^8.3.5"
+pytest-cov = "^6.0.0"
+
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.9"
 
@@ -103,6 +112,59 @@ relative-imports-order = "closest-to-furthest"
     "D", # disable all docstring checks
     "ERA" # disable all eradicate checks
 ]
+"tests/*.py" = [
+    "D100", # missing docstring in public module
+    "D103", # missing docstring in public function
+    "E712", # avoid equality comparison to true
+    "S101", # use of assert detected
+]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
+
+[tool.pytest.ini_options]
+pythonpath = ["trainchallenge"]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+data_file = ".pytest_coverage/.coverage"
+concurrency = ["multiprocessing"]
+omit = [
+    "*/tests/*"
+]
+branch = true
+
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:"
+]
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+requires = tox>=4
+envlist = clean,py{310,311},report
+
+[testenv]
+allowlist_externals = poetry
+commands = 
+    # Disable ruff plugin for better coverage results
+    poetry install --with test
+    poetry run pytest --cov=trainchallenge --cov-append --cov-report=term-missing {posargs}
+depends =
+    py{310,311}: clean
+    report: py{310,311}
+
+[testenv:clean]
+deps = coverage
+skip_install = true
+commands = coverage erase
+
+[testenv:report]
+deps = coverage
+skip_install = true
+parallel_show_output = true
+commands = 
+    coverage lcov -o .pytest_coverage/lcov.info
+    coverage report
+"""
