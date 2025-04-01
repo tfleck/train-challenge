@@ -228,10 +228,10 @@ def next_septa(req: func.HttpRequest, context: Context) -> func.HttpResponse:
         train_sched = datetime.strptime(next_train["sched_time"], septa_date_format)
         leave_time = train_sched - timedelta(hours=travel_time)
 
-        if leave_time < datetime.now():
-            time_to_leave = "You can't make the next train in time"
-        else:
+        if datetime.now() < leave_time:  # the current time is before the time to leave
             time_to_leave = leave_time.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            time_to_leave = "You can't make the next train in time"
 
     # return the nearest station as a GeoJSON feature
     ret = geojson.Feature(

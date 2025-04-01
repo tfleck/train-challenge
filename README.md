@@ -10,6 +10,14 @@ This repository contains code for a challenge to create a scalable, production-g
  - This repository also contains configs to support the developer experience, such as VS Code config files for extensions, editor settings and launching a debug server. The `pyproject.toml` and `poetry.toml` files contain configuration for the Poetry packaging utility as well as linting / style rules that are integrated in VS Code. With this approach, every new developer who contributes to the project can get quickly up to speed and write code that conforms to the same style and syntax.
 
 ### Application Architecture
+```mermaid
+sequenceDiagram
+    Client->>+APIM: API Request
+    APIM->>+Azure Functions: Forwards Authenticated Request
+    Azure Functions-->>SEPTA API: Gets additional data if needed
+    Azure Functions->>+APIM: API Response
+    APIM->>+Client: Forwards Response
+```
 The API itself is hosted on Azure Functions using the newer Flex Consumption plan, which offers great scale at a pretty low cost. I was able to achieve a throughput of over 1000 requests/second and a 90th percentile response time of only 118 milliseconds while loaded on a pretty limited instance. Azure Functions scales out dynamically with traffic load, which would handle spikes in user traffic gracefully without requiring expensive servers to be online 24/7.
 
 Incoming requests to the API are handled by Azure API Management, this handles functionality such as user authentication, rate-limiting, quota enforcement and caching. APIM makes it easy to manage all of these functions centrally behind a single interface for users. Azure Functions has its own built in authentication proxy, App Service Authentication, which is super simple for OAuth 2.0 / OIDC provider integration directly, but it does not have the ability to perform advanced functions such as rate-limiting.
@@ -27,3 +35,12 @@ Every API request must contain an API key either as an HTTP header, or a URL que
 To further harden this project, the Azure Functions could be put on a private VNet without internet access and be connected to APIM internally. In this example, to save on cost, the Azure Function instance is open to the internet (but still requires an API key to access that only APIM uses).
 
 Inside of the API itself, the query parameters are strictly validated as float values, preventing the malicious insertion of other arbitrary data that might compromise or otherwise negatively affect the API service.
+
+### Testing
+Unit testing is implemented using Pytest, Coverage, and Tox. These libraries all work together to provide a good experience for quality testing. Test runs and results are neatly integrated in VS Code, not only highlighting pass/fail but visualizing code coverage as well with the Coverage Gutters extension. Tox is useful for release testing so that validation of the test suite can be easily performed across multiple Python versions all at once in parallel. This is a great way to identify and prevent regressions.
+
+### Future Improvements
+ - By upgrading the tier of the APIM instance, we can improve performance by including an internal request cache, as well as enabling a developer portal for users to sign up for the service, get api keys and see code samples.
+ - Data from train operators, such as SEPTA, can be further integrated in order to provide real time information on available train routes, what time they leave, etc.
+ - Change the next train portion of the API to account for multiple trains going in the same direction to pick the one that is closest to the user in a suitable travel time.
+ - The Google Maps API could be used to provide exact navigation instructions to the user as opposed to a link that opens directions. This could be useful if a dataset information about specific train stations were available that could give users additional help, such as which door to enter a station from in order to reach the desired track fastest. Another use for this could be returning the nearest station by travel time not by cartesian distance, this approach could also account for factors such as traffic or blockages which would be accounted for in live walking time estimates.
