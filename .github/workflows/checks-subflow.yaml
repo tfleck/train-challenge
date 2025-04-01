@@ -36,8 +36,7 @@ jobs:
         run: poetry install --with api,dev,test
 
       - name: Run Ruff Linter
-        uses: astral-sh/ruff-action@v3
-        run: ruff check
+        run: poetry run ruff check
 
       - name: Run Python Tests
         run: poetry run tox
