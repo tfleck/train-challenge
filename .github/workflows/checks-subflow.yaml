@@ -4,6 +4,7 @@ on:
 
 jobs:
   check-bicep:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -11,7 +12,8 @@ jobs:
       - name: Lint Bicep
         run: az bicep lint --file bicep/main.bicep
   
-  run-pytest:
+  check-python:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
