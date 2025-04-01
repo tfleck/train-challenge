@@ -31,7 +31,13 @@ def get_nearest_point(p: Point, pts: GeoSeries):
     if not p.is_valid:
         raise ValueError("Point is not a valid geometry. Cannot find nearest point.")
 
-    idx = pts.sindex.nearest(p)
+    # 0.189609 is approximately 10 miles, a realistic max for walking distance
+    idx = pts.sindex.nearest(p, max_distance=0.189609)
+
+    # if there is no result, return None
+    if len(idx[1]) == 0:
+        return None
+    # otherwise return the index value
     return idx[1][0]
 
 
