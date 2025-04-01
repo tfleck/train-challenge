@@ -10,6 +10,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  run-checks:
+    uses: ./.github/workflows/checks-subflow.yaml
+  
   deploy-dev:
     uses: ./.github/workflows/deploy-subflow.yaml
     secrets: inherit

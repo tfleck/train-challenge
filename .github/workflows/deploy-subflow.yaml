@@ -82,7 +82,7 @@ jobs:
             "githubAuthClientSecret": "${{ secrets.GH_AUTH_CLIENT_SECRET }}"
           }'
 
-      - name: 'Resolve Project Dependencies Using Pip'
+      - name: Resolve Project Dependencies Using Pip
         shell: bash
         run: |
           pushd '.'
@@ -94,7 +94,7 @@ jobs:
           echo "trainchallenge" >> requirements.txt
           popd
 
-      - name: 'Run Azure Functions Action'
+      - name: Run Azure Functions Action
         uses: Azure/functions-action@v1
         with:
           app-name: ${{ steps.bicep-deploy.outputs.functionAppName }}

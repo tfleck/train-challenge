@@ -52,7 +52,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.pyright]
 typeCheckingMode = "basic"
 useLibraryCodeForTypes = false
-include = ["trainchallenge"]
+include = ["trainchallenge", "function_app"]
 check_untyped_defs = true
 # enable subset of "strict" settings
 reportDuplicateImport = true
@@ -70,7 +70,7 @@ reportUnknownParameterType = true
 [tool.ruff]
 target-version = "py310"
 fix = true
-lint.unfixable = [
+lint.ignore = [
     "ERA", # do not autoremove commented out code
     "F401", # do not autoremove unused imports
 ]
@@ -102,7 +102,7 @@ ban-relative-imports = "all"
 force-single-line = true
 lines-between-types = 1
 lines-after-imports = 2
-known-first-party = ["trainchallenge"]
+known-first-party = ["trainchallenge", "function_app"]
 relative-imports-order = "closest-to-furthest"
 
 [tool.ruff.lint.per-file-ignores]

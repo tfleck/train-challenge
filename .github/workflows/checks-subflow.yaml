@@ -1,0 +1,41 @@
+name: Checks subflow
+on:
+  workflow_call:
+
+jobs:
+  check-bicep:
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lint Bicep
+        run: az bicep lint --file bicep/main.bicep
+  
+  run-pytest:
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: |
+          pipx install poetry
+          pipx inject poetry poetry-plugin-export
+      
+      - name: Setup Python Environment
+        uses: actions/setup-python@v5
+        id: setup-python
+        with:
+          python-version-file: 'pyproject.toml' # Read python version from a file pyproject.toml
+          cache: 'poetry' # caching poetry dependencies
+          cache-dependency-path: 'poetry.lock' # caching poetry dependencies
+
+      - name: Install Project Dependencies
+        shell: bash
+        run: poetry install --with api,dev,test
+
+      - name: Run Ruff Linter
+        uses: astral-sh/ruff-action@v3
+
+      - name: Run Python Tests
+        run: poetry run tox
+        # TODO: upload test report artifacts to github actions for viewing
