@@ -11,7 +11,8 @@ requires-python = ">=3.10,<3.12"
 dependencies = [
     "geopandas (>=1.0.1,<2.0.0)",
     "geojson (>=3.2.0,<4.0.0)",
-    "lxml (>=5.3.1,<6.0.0)"
+    "lxml (>=5.3.1,<6.0.0)",
+    "requests (>=2.32.3,<3.0.0)"
 ]
 
 [tool.poetry.group.api]
@@ -118,6 +119,9 @@ relative-imports-order = "closest-to-furthest"
     "E712", # avoid equality comparison to true
     "S101", # use of assert detected
 ]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"

@@ -131,6 +131,39 @@ resource septaApiPolicy 'Microsoft.ApiManagement/service/apis/operations/policie
   }
 }
 
+resource nextSeptaApiOperation 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
+  name: 'next-septa'
+  parent: functionApi
+  properties: {
+    displayName: 'next_septa'
+    method: 'GET'
+    urlTemplate: '/next_septa'
+    request:{
+      queryParameters: [
+        {
+          name: 'latitude'
+          required: true
+          type: 'number'
+        }
+        {
+          name: 'longitude'
+          required: true
+          type: 'number'
+        }
+      ]
+    }
+  }
+}
+
+resource nextSeptaApiPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2024-06-01-preview' = {
+  parent: nextSeptaApiOperation
+  name: 'policy'
+  properties: {
+    value: apimOpPolicy
+    format: 'xml'
+  }
+}
+
 resource dcmetroApiOperation 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
   name: 'nearest-dcmetro'
   parent: functionApi
