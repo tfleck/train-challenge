@@ -41,3 +41,4 @@ jobs:
       - name: Run Python Tests
         run: poetry run tox
         # TODO: upload test report artifacts to github actions for viewing
+        # TODO: add extra python versions so tests can be run against every supported version
